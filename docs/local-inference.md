@@ -42,6 +42,20 @@
 - 单Y/N采样后跳过反馈的快返只做过专项检查，没有手机提速证据，未启用。
 - 官方连续解码token/s不能替代此场景单图prefill/首判时间；默认不启用DSpark。
 
+## 可选服务器对照：Qwen3-VL-4B
+
+这不是手机入口，也不接入提醒合同、找东西或播报。返回的 Y 不能当作现场事实，也不表示用户听到了声音。2026-10-28 在服务器 RTX 4090 上，用 llama.cpp llama-server build-1153、Qwen3-VL-4B-Instruct Q4_K_M、Q8_0 视觉投影、上下文 4096、批宽 256、`--image-min-tokens 1024`、温度 0、最多 2 个 token，对 32 条自备生活图做图文同轮 Y/N，结果是 31/32、误报 0。没有测量 503/429、断线恢复、每分钟请求数或账单。批宽保持文档中的 256，不改 35B 的 prefill 缓存。权重和可执行文件由贡献者自己提供，只通过环境变量传入。
+
+```sh
+export QWEN3VL_LLAMA_SERVER=/path/to/llama-server
+export QWEN3VL_MODEL=/path/to/Qwen3VL-4B-Instruct-Q4_K_M.gguf
+export QWEN3VL_MMPROJ=/path/to/mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf
+infrastructure/qwen3-vl-4b/serve.sh
+node infrastructure/qwen3-vl-4b/runtime.cjs ask frame.jpg "测试目标" "当前图中清晰出现测试目标"
+```
+
+模型名称和供应商能力会变化。上面的数字只对应该日、该配置，不表示以后免费或在手机上同样可用。
+
 ## 如何复现
 
 先按[构建说明](ios-build.md)准备自己的iPhone、模型和应用。普通入口为阿里页“本地主动提醒（阿里声音）”，35B缓存默认开；1B入口为谷歌直连声音。两者不能同时加载。
